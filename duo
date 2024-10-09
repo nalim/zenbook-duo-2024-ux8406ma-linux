@@ -45,6 +45,13 @@ status_internal() {
   esac
 }
 
+set_displays_external() {
+  sleep 2
+  if ! external_display_connected; then 
+    set_displays_normal
+  fi
+}
+
 set_displays() {
   echo "set_displays $1 $(status_internal)" >>/tmp/duo.log    
   if [[ $1 != $(status_internal) ]]; then   
@@ -122,10 +129,7 @@ echo "$(date) $1" >>/tmp/duo.log
 
 case "$1" in
   set-displays)
-    sleep 2
-    if ! external_display_connected; then 
-      set_displays_normal
-    fi
+    set_displays_external
     ;;
   normal|bottom-up)
     set_displays_normal
@@ -185,10 +189,13 @@ case "$1" in
   watch-sw-tablet-mode)
     # https://unix.stackexchange.com/questions/428399/how-can-i-run-a-shell-script-on-input-device-event
     device='/dev/input/by-path/platform-asus-nb-wmi-event'
-    event_dock='*code 4 (MSC_SCAN), value 5e*'
+    #event_dock='*code 4 (MSC_SCAN), value 5e*'
+    #event_dock='*code 1 (SW_TABLET_MODE), value 0'
+    #event_dock='*code 1 (SW_TABLET_MODE), value 1'
+    event_dock='*code 1 (SW_TABLET_MODE), value *'
     evtest "$device" | while read line; do
       case $line in
-        ($event_dock) echo "DOCK" ;;
+        ($event_dock) set_displays_external ;;
         #*) echo $line
       esac
     done
