@@ -52,6 +52,13 @@ set_displays_external() {
   fi
 }
 
+set_displays_external_kbd() {
+  sleep 2
+  if ! external_display_connected; then 
+    set_displays_normal_kbd $1
+  fi
+}
+
 set_displays() {
   echo "set_displays $1 $(status_internal)" >>/tmp/duo.log    
   if [[ $1 != $(status_internal) ]]; then   
@@ -90,8 +97,13 @@ set_displays_internal() {
 }
 
 set_displays_normal() {
+  set_displays_normal_kbd kbd_connected
+}
+
+set_displays_normal_kbd() {
   #if lsusb|grep 0b05:1b2c ; then
-  if kbd_connected ; then
+  #if kbd_connected ; then
+  if $1 ; then
     set_displays top
   else
     set_displays both
@@ -190,12 +202,14 @@ case "$1" in
     # https://unix.stackexchange.com/questions/428399/how-can-i-run-a-shell-script-on-input-device-event
     device='/dev/input/by-path/platform-asus-nb-wmi-event'
     #event_dock='*code 4 (MSC_SCAN), value 5e*'
-    #event_dock='*code 1 (SW_TABLET_MODE), value 0'
-    #event_dock='*code 1 (SW_TABLET_MODE), value 1'
-    event_dock='*code 1 (SW_TABLET_MODE), value *'
+    event_tablet_on='*code 1 (SW_TABLET_MODE), value 1'
+    event_tablet_off='*code 1 (SW_TABLET_MODE), value 0'
+    #event_dock='*code 1 (SW_TABLET_MODE), value *'
     evtest "$device" | while read line; do
       case $line in
-        ($event_dock) set_displays_external ;;
+        #($event_dock) set_displays_external ;;
+        ($event_tablet_on) set_displays_external_kbd false ;;
+        ($event_tablet_off) set_displays_external_kbd true ;;
         #*) echo $line
       esac
     done
