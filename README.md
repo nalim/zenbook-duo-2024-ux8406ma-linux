@@ -3,9 +3,10 @@
 Features:
 * brightness sync (any)
 * battery limiter (any)
-* touch/pen panels mapping (GNOME-specific, requires GNOME 46 or a backported Mutter patch)
-* automatic bottom screen on/off (GNOME-specific)
-* automatic rotation (GNOME-specific)
+* touch/pen panels mapping (any)
+* automatic bottom screen on/off (any)
+* automatic rotation (GNOME-specific?)
+* automatic bottom screen on/off using SW_TABLET_MODE (any, requires patched Asus WMI module)
 
 ## panel mapping
 
@@ -37,6 +38,7 @@ You also want to add `duo set-displays` to your startup so it'll set your laptop
 
 For manual screen management there are `duo top`, `duo bottom`, `duo both` and `duo toggle` (toggles between top and both) commands.
 
+You can use similar setup in Cinnamon DM.
 
 ## automatic rotation
 
@@ -77,3 +79,7 @@ Prerequisities:
 Libwacom files elan-425a.tablet and elan-425b.tablet should be copied to /usr/share/libwacom
 For brightness sync to work properly, line 10 of the duo.sh should be modified to `backlight=card1-eDP-2-backlight`
 
+## Other components
+
+- https://github.com/nalim/asus-wmi-patch
+- https://github.com/nalim/gnome-monitor-config

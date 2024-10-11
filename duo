@@ -53,7 +53,7 @@ set_displays_external() {
 }
 
 set_displays_external_kbd() {
-  sleep 2
+  #sleep 2
   if ! external_display_connected; then 
     set_displays_normal_kbd $1
   fi
